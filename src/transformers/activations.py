@@ -1,3 +1,17 @@
+# Copyright 2020 The HuggingFace Team. All rights reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
 import math
 
 import torch
@@ -38,6 +52,10 @@ def gelu_fast(x):
     return 0.5 * x * (1.0 + torch.tanh(x * 0.7978845608 * (1.0 + 0.044715 * x * x)))
 
 
+def quick_gelu(x):
+    return x * torch.sigmoid(1.702 * x)
+
+
 def _silu_python(x):
     """
     See Gaussian Error Linear Units (Hendrycks et al., https://arxiv.org/abs/1606.08415) where the SiLU (Sigmoid Linear
@@ -71,6 +89,7 @@ ACT2FN = {
     "tanh": torch.tanh,
     "gelu_new": gelu_new,
     "gelu_fast": gelu_fast,
+    "quick_gelu": quick_gelu,
     "mish": mish,
     "linear": linear_act,
     "sigmoid": torch.sigmoid,
@@ -81,4 +100,4 @@ def get_activation(activation_string):
     if activation_string in ACT2FN:
         return ACT2FN[activation_string]
     else:
-        raise KeyError("function {} not found in ACT2FN mapping {}".format(activation_string, list(ACT2FN.keys())))
+        raise KeyError(f"function {activation_string} not found in ACT2FN mapping {list(ACT2FN.keys())}")
